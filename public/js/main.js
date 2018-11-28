@@ -1,5 +1,11 @@
 var socket = io("http://localhost:3000")
 
+jQuery("#room").css("visibility", "hidden");
+jQuery("#start-match").css("visibility", "hidden");
+jQuery('#btn-player-ready').val("false")
+
+var admin = false
+
 
 socket.on('connect', function () {
   console.log("connected to server")
@@ -14,29 +20,98 @@ socket.on('listRooms', function(rooms) {
   });
 })
 
+socket.on('updatePlayerList', function(players) {
+  var ol = jQuery('<ol></ol>');
+  console.log(players)
+  console.log("doasjidoj")
+
+  players.forEach(function (player) {
+    var isReady = 'X'
+    if (player.ready){
+      isReady = 'V'
+    }
+    ol.append(jQuery('<li></li>').text(player.name + " " + isReady))
+  })
+
+  jQuery('#player_list').html(ol)
+})
+
 
 jQuery('#new-room').on('submit', function(e) {
   e.preventDefault();
+
+  var playerName = jQuery('#player-name').val()
+
+  if (playerName === ""){
+    alert("Player name can't be empty")
+    return
+  }
 
   var newRoomName = jQuery('[name=new-room-name]');
 
   //Make validation for names
 
   socket.emit('newRoom', {
-    name : newRoomName.val()
-  }, function (success) {
+    name : newRoomName.val(),
+    playerName
+  }, function (success, room) {
     if (!success){
-      alert("Já exite uma sala com este nome.")
+      alert("A room with this name already exists")
+      return
     }
-    jQuery("#list-rooms").css("visibility", "hidden");
-    jQuery("#new-room").css("visibility", "hidden");
+    admin = true
+    jQuery("#lobby").css("visibility", "hidden");
+    renderRoom()
+    console.log(room)
   });
 });
 
+jQuery('#btn-player-ready').on('click', function(e) {
+  e.preventDefault();
+
+  var ready = jQuery('#btn-player-ready').val()
+  
+  ready = ready === "true" ? true : false
+  
+  socket.emit('playerReady', !ready)
+  
+  jQuery('#btn-player-ready').val(String(!ready))  
+  
+  if (!ready){
+    jQuery('#btn-player-ready').html("I'm not ready")
+  } else {
+    jQuery('#btn-player-ready').html("Ready to play")
+  }
+
+});
+
+
+jQuery('#btn-start-match').on('click', function(e) {
+  e.preventDefault()
+
+  socket.emit('startMatch')
+})
+
 
 function joinRoom(name){
-  socket.emit('joinRoom', {name}, function () {
-    jQuery("#list-rooms").hide(); 
-    jQuery("#new-room").hide(); 
+  var playerName = jQuery('#player-name').val()
+  
+  if (playerName === ""){
+    alert("Player name can't be empty")
+    return
+  }
+
+  socket.emit('joinRoom', {name,playerName}, function (room) {
+    jQuery("#lobby").css("visibility", "hidden");
+    renderRoom()
+    console.log(room)
   })
+}
+
+
+function renderRoom(){
+  jQuery("#room").css("visibility", "visible");
+  if (admin){
+    jQuery("#start-match").css("visibility", "visible");
+  }
 }

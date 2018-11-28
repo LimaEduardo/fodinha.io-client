@@ -8,21 +8,38 @@
   <link rel="stylesheet" type="text/css" media="screen" href="main.css" />
 </head>
 <body>
-  <form id="new-room">
-    <input name="new-room-name" type="text" placeholder="New room name" autofocus autocomplete="off"/>    
-    <button>Send</button>
-  </form>
-  <div id='list-rooms'>
+  <div id="lobby">
+
+    <input name="player-name" id="player-name" placeholder="Player name" autofocus autocomplete="off"/>
+    <form id="new-room">
+      <input name="new-room-name" type="text" placeholder="New room name" autofocus autocomplete="off"/>    
+      <button>Send</button>
+    </form>
+    <div id='list-rooms'>
+
+    </div>
 
   </div>
 
 
 
   <div id='room'>
+    lelele
+    <div id='players'>
+        <h3>Players</h3>
+        <div id="player_list">
 
+        </div>
+    </div>
+    <div id='player-ready'>
+      <button id='btn-player-ready'>Ready to play</button>
+    </div>
+    <div id='start-match'>
+      <button id='btn-start-match'>Start match</button>
+    </div>
   </div>
 
-  
+
   <script src="/js/libs/jquery.js"></script>
   <script src="/js/libs/mustache.min.js"></script>
   <script src="/socket.io/socket.io.js"></script>
