@@ -14,16 +14,16 @@ socket.on('connect', function () {
 socket.on('listRooms', function(rooms) {
   var roomList = jQuery("#list-rooms");
   roomList.empty()
-  rooms.rooms.forEach(element => {
-    roomList.append(`<h4>${element.name}</h4>`)
-    roomList.append(`<button id='join_room' onclick="joinRoom('${element.name}')" name=${element.name}> Join room </button>`)
+  rooms.rooms.forEach(room => {
+    if (!room.inGame){
+      roomList.append(`<h4>${room.name}</h4>`)
+      roomList.append(`<button id='join_room' onclick="joinRoom('${room.name}')" name=${room.name}> Join room </button>`)
+    }
   });
 })
 
 socket.on('updatePlayerList', function(players) {
   var ol = jQuery('<ol></ol>');
-  console.log(players)
-  console.log("doasjidoj")
 
   players.forEach(function (player) {
     var isReady = 'X'
@@ -34,6 +34,25 @@ socket.on('updatePlayerList', function(players) {
   })
 
   jQuery('#player_list').html(ol)
+})
+
+
+socket.on('givePlayersCards', function(players) {
+  var cards = []
+  players.forEach(function (player) {
+    if (player.id === socket.id){
+      cards = player.cards
+      renderCards(cards)
+    }
+  })
+})
+
+socket.on('startMatchWithCards', function(currentPlayer) {
+  if (socket.id === currentPlayer.id){
+    alert("It's your turn to play")
+  } else {
+    alert("It's " + currentPlayer.name + " turn")
+  }
 })
 
 
@@ -114,4 +133,17 @@ function renderRoom(){
   if (admin){
     jQuery("#start-match").css("visibility", "visible");
   }
+}
+
+function renderCards(cards){
+  var myCards = jQuery('#my-cards')
+  var list = jQuery('<div></div>');
+
+  cards.forEach((card) => {
+    list.append(jQuery('<li></li>').text(card.value + " " + card.pack))
+  })
+
+  myCards.html(list)
+
+
 }
