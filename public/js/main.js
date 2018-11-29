@@ -5,6 +5,7 @@ jQuery("#start-match").css("visibility", "hidden");
 jQuery('#btn-player-ready').val("false")
 
 var admin = false
+var myTurn = false
 
 
 socket.on('connect', function () {
@@ -50,9 +51,32 @@ socket.on('givePlayersCards', function(players) {
 socket.on('startMatchWithCards', function(currentPlayer) {
   if (socket.id === currentPlayer.id){
     alert("It's your turn to play")
+    myTurn = true
   } else {
     alert("It's " + currentPlayer.name + " turn")
+    myTurn = false
   }
+})
+
+socket.on('changeTurn', function({currentPlayer, players}) {
+  console.log("CHANGE")
+  console.log(currentPlayer, players)
+  if (socket.id === currentPlayer.id){
+    alert("It's your turn to play")
+    myTurn = true
+  } else {
+    alert("It's " + currentPlayer.name + " turn")
+    myTurn = false
+  }
+  players.forEach(function (player) {
+    if (player.id === socket.id){
+      renderCards(player.cards)
+    }
+  })
+})
+
+socket.on('announceWinner', function({winner}) {
+  alert(`${winner.name} won this round!`)
 })
 
 
@@ -139,11 +163,21 @@ function renderCards(cards){
   var myCards = jQuery('#my-cards')
   var list = jQuery('<div></div>');
 
-  cards.forEach((card) => {
-    list.append(jQuery('<li></li>').text(card.value + " " + card.pack))
+  console.log(cards)
+
+  cards.forEach((card) => {    
+    list.append(jQuery(`<li id='${card.value + card.pack}' onclick='useCard("${card.value}", "${card.pack}", "${card.weight}")'></li>`).text(card.value + " " + card.pack))
   })
 
   myCards.html(list)
+}
 
-
+function useCard(value, pack, weight){
+  if (!myTurn){
+    alert("It's not your turn to play.")
+    return
+  } else {
+    socket.emit('playerMove', {value,pack,weight})
+    alert("carta", value, pack, weight)
+  }
 }
