@@ -15,10 +15,16 @@ socket.on('connect', function () {
 socket.on('listRooms', function(rooms) {
   var roomList = jQuery("#list-rooms");
   roomList.empty()
+  if (rooms.rooms.length === 0) {
+    roomList.append(`<h3 align='center'>Unfortunately no rooms are available </h3>`)
+    return
+  }
   rooms.rooms.forEach(room => {
     if (!room.inGame){
-      roomList.append(`<h4>${room.name}</h4>`)
-      roomList.append(`<button id='join_room' onclick="joinRoom('${room.name}')" name=${room.name}> Join room </button>`)
+      // <p>Put the button on the same line as this text. <span class="pull-right">
+      // <button type="button" class="btn btn-default btn-small" name="submit" id="submit">+ Add Me</button></span></p>
+      roomList.append(`<p>Room: ${room.name} <span class='pull-right'>`)
+      roomList.append(`<button type='buttom' class='btn btn-primary btn-small' name='join_room' id='join_room' onclick="joinRoom('${room.name}')" name=${room.name}> Join room </button></span></p>`)
     }
   });
 })

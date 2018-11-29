@@ -5,18 +5,32 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <title>Page Title</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="stylesheet" type="text/css" media="screen" href="main.css" />
+  <link rel="stylesheet" href="./css/bootstrap.min.css">
+  <link rel="stylesheet" href="./css/custom.css">
+  <script src="./js/bootstrap.min.js"></script>
+  <!-- <link rel="stylesheet" type="text/css" media="screen" href="main.css" /> -->
 </head>
 <body>
-  <div id="lobby">
-
-    <input name="player-name" id="player-name" placeholder="Player name" autofocus autocomplete="off"/>
-    <form id="new-room">
-      <input name="new-room-name" type="text" placeholder="New room name" autofocus autocomplete="off"/>    
-      <button>Send</button>
-    </form>
-    <div id='list-rooms'>
-
+  <div id="lobby" class="container">
+    <div id="player-name-container">
+      <h3 align="center">Enter the player's name </h3>
+      <div align="center">
+        <input name="player-name" id="player-name" placeholder="Player name" autofocus autocomplete="off"/>
+      </div>
+    </div>
+    <div id="rooms-availabe" class="list-rooms">
+      <h3 align="center"> Rooms availabe: </h3>
+      <div id='list-rooms' class='container' align="center">
+          
+      </div>
+    </div>
+    
+    <div align="center">
+      <h3 align="center"> Did not find a room? Create one! </h3>
+      <form id="new-room">
+        <input name="new-room-name" type="text" placeholder="New room name" autofocus autocomplete="off"/>    
+        <button>Create a new room</button>
+      </form>
     </div>
 
   </div>
@@ -45,6 +59,7 @@
 
 
   <script src="/js/libs/jquery.js"></script>
+  <!-- Not using mustache -->
   <script src="/js/libs/mustache.min.js"></script>
   <script src="/socket.io/socket.io.js"></script>
   <script src="/js/main.js"></script>
