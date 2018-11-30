@@ -16,7 +16,7 @@ socket.on('listRooms', function(rooms) {
   var roomList = jQuery("#list-rooms");
   roomList.empty()
   if (rooms.rooms.length === 0) {
-    roomList.append(`<h3 align='center'>Unfortunately no rooms are available </h3>`)
+    roomList.append(`<h3 align='center'>Unfortunately there are no rooms available </h3>`)
     return
   }
   rooms.rooms.forEach(room => {
@@ -29,17 +29,18 @@ socket.on('listRooms', function(rooms) {
 })
 
 socket.on('updatePlayerList', function(players) {
-  var ol = jQuery('<ol></ol>');
+  var div = jQuery("#player-list");
+  div.empty()
 
   players.forEach(function (player) {
     var isReady = 'X'
     if (player.ready){
       isReady = 'V'
     }
-    ol.append(jQuery('<li></li>').text(player.name + " " + isReady))
+    div.append(jQuery(`<div class="player-card row"><div class="col-sm-3"><h5>Name: ${player.name}</h5> <h6> Ready: ${isReady} </h6></div><div class="col-sm-9"> <h6>Cards:</h6> <div id="cards-${player.name}" class="cards-container"></div> </div></div>`))
   })
 
-  jQuery('#player_list').html(ol)
+  // jQuery('#player_list').html(ol)
 })
 
 
@@ -48,7 +49,7 @@ socket.on('givePlayersCards', function(players) {
   players.forEach(function (player) {
     if (player.id === socket.id){
       cards = player.cards
-      renderCards(cards)
+      renderCards(player,cards, players)
     }
   })
 })
@@ -85,7 +86,7 @@ socket.on('changeTurn', function({currentPlayer, players}) {
   }
   players.forEach(function (player) {
     if (player.id === socket.id){
-      renderCards(player.cards)
+      renderCards(player,player.cards, players)
     }
   })
 })
@@ -174,9 +175,10 @@ function renderRoom(name){
   }
 }
 
-function renderCards(cards){
-  var myCards = jQuery('#my-cards')
-  var list = jQuery('<div></div>');
+function renderCards(player,cards, players){
+  var myCards = jQuery(`#cards-${player.name}`)
+
+  myCards.empty()
 
   cards.forEach((card) => {
     var pack, color
@@ -193,13 +195,26 @@ function renderCards(cards){
       pack = '\u2665'
       color = 'red-card'
     }
-    list.append(jQuery(`<div id='${card.value + card.pack}' class="card ${color}" onclick='useCard("${card.value}", "${card.pack}", "${card.weight}")'><span>${card.value + " " + pack}</span></div>`))
+    myCards.append(jQuery(`<div id='${card.value + card.pack}' class="card ${color}" onclick='useCard("${card.value}", "${card.pack}", "${card.weight}")'><span align='center'>${card.value + " " + pack}</span></div>`))
+  
   })
 
-  myCards.html(list)
+  players.forEach((individual) => {
+    if (player.name === individual.name){
+      return
+    } else {
+      console.log("oq", individual)
+      var individualCards = jQuery(`#cards-${individual.name}`)
+      individualCards.empty()
+      console.log(individualCards)
+      individual.cards.forEach((card) => {
+        console.log(card)
+        individualCards.append(jQuery(`<div class="card"><img src="../assets/back-card.png" alt="Opponent Card" height="100px" width="60px"></div>`))
+      })
+    }
+  })
 }
 
-//DUDUUU, FAZ ISSO AQUI FICAR BUNITO
 function renderPoints(points) {
   jQuery("#my-points").html(`Points: ${points}`)
 }

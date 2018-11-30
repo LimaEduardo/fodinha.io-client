@@ -12,23 +12,47 @@
   margin-right: 30px;
 }
 
+.cards-container {
+  display: inline
+}
+
 .card {
-  display: inline-block;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   height: 100px;
   width: 60px;
   background-color: #f8f8f8;
   border-style: solid;
-  border-color: black
+  border-color: black;
+  float: left;
+  margin-left: 5px;
 }
 
 .card:hover {
-  display: inline-block;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   height: 100px;
   width: 60px;
   background-color: #f8f8f8;
   border-style: solid;
   border-color: rgb(0, 60, 255);
   border-width: 3px;
+  float: left;
+  margin-left: 5px;
+}
+
+.card-value {
+  width: 300px;
+  height: 100px;
+  padding: 20px;
+
+  position: absolute;
+  top: 50%;
+  left: 50%;
+
+  margin: -70px 0 0 -170px;
 }
 
 .black-card {
@@ -43,4 +67,10 @@
 
 .div-inline{
   display: inline
+}
+
+.player-card{
+  border-style: solid;
+  border-color:black;
+  border-width: 1px;
 }
