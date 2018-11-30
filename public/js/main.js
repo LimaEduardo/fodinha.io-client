@@ -60,10 +60,10 @@ socket.on('sendPlayersPoints', function(players) {
 
 socket.on('startMatchWithCards', function(currentPlayer) {
   if (socket.id === currentPlayer.id){
-    document.getElementById("player-turn").innerHTML = "Its your turn to play!";
+    jQuery("#player-turn").html(`It's your turn to play!`)
     myTurn = true
   } else {
-    document.getElementById("player-turn").innerHTML = `It's ${currentPlayer.name} turn!`;
+    jQuery("#player-turn").html(`It's ${currentPlayer.name} turn!`)
     myTurn = false
   }
 })
@@ -72,10 +72,10 @@ socket.on('changeTurn', function({currentPlayer, players}) {
   console.log("CHANGE")
   console.log(currentPlayer, players)
   if (socket.id === currentPlayer.id){
-    document.getElementById("player-turn").innerHTML = "Its your turn to play!";
+    jQuery("#player-turn").html(`It's your turn to play!`)
     myTurn = true
   } else {
-    document.getElementById("player-turn").innerHTML = `It's ${currentPlayer.name} turn!`;
+    jQuery("#player-turn").html(`It's ${currentPlayer.name} turn!`)
     myTurn = false
   }
   players.forEach(function (player) {
@@ -184,7 +184,7 @@ function renderCards(cards){
 
 //DUDUUU, FAZ ISSO AQUI FICAR BUNITO
 function renderPoints(points) {
-  document.getElementById("my-points").innerHTML = `Pontos: ${points}`;
+  jQuery("#my-points").html(`Pontos: ${points}`)
 }
 
 function useCard(value, pack, weight){
