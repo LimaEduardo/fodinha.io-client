@@ -119,7 +119,7 @@ jQuery('#new-room').on('submit', function(e) {
     }
     admin = true
     jQuery("#lobby").css("display", "none");
-    renderRoom()
+    renderRoom(newRoomName.val())
     console.log(room)
   });
 });
@@ -201,7 +201,7 @@ function renderCards(cards){
 
 //DUDUUU, FAZ ISSO AQUI FICAR BUNITO
 function renderPoints(points) {
-  jQuery("#my-points").html(`Pontos: ${points}`)
+  jQuery("#my-points").html(`Points: ${points}`)
 }
 
 function useCard(value, pack, weight){
