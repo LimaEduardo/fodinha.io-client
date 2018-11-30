@@ -23,8 +23,7 @@ socket.on('listRooms', function(rooms) {
     if (!room.inGame){
       // <p>Put the button on the same line as this text. <span class="pull-right">
       // <button type="button" class="btn btn-default btn-small" name="submit" id="submit">+ Add Me</button></span></p>
-      roomList.append(`<p>Room: ${room.name} <span class='pull-right'>`)
-      roomList.append(`<button type='buttom' class='btn btn-primary btn-small' name='join_room' id='join_room' onclick="joinRoom('${room.name}')" name=${room.name}> Join room </button></span></p>`)
+      roomList.append(`<p>Room: ${room.name} <span class='pull-right'><button type='buttom' class='btn btn-primary btn-small btn-join-room' name='join_room' id='join_room' onclick="joinRoom('${room.name}')" name=${room.name}> Join room </button></span> Players : ${room.players.length} </p>`)
     }
   });
 })
@@ -109,7 +108,7 @@ jQuery('#new-room').on('submit', function(e) {
       return
     }
     admin = true
-    jQuery("#lobby").css("visibility", "hidden");
+    jQuery("#lobby").css("display", "none");
     renderRoom()
     console.log(room)
   });
@@ -144,22 +143,22 @@ jQuery('#btn-start-match').on('click', function(e) {
 
 function joinRoom(name){
   var playerName = jQuery('#player-name').val()
-  
   if (playerName === ""){
     alert("Player name can't be empty")
     return
   }
 
   socket.emit('joinRoom', {name,playerName}, function (room) {
-    jQuery("#lobby").css("visibility", "hidden");
-    renderRoom()
+    jQuery("#lobby").css("display", "none");
+    renderRoom(name)
     console.log(room)
   })
 }
 
 
-function renderRoom(){
+function renderRoom(name){
   jQuery("#room").css("visibility", "visible");
+  jQuery("#room-title").text(`Room: ${name}`)
   if (admin){
     jQuery("#start-match").css("visibility", "visible");
   }
@@ -169,10 +168,22 @@ function renderCards(cards){
   var myCards = jQuery('#my-cards')
   var list = jQuery('<div></div>');
 
-  console.log(cards)
-
-  cards.forEach((card) => {    
-    list.append(jQuery(`<li id='${card.value + card.pack}' onclick='useCard("${card.value}", "${card.pack}", "${card.weight}")'></li>`).text(card.value + " " + card.pack))
+  cards.forEach((card) => {
+    var pack, color
+    if (card.pack === "espadas"){
+      pack = '\u2660'
+      color = 'black-card'
+    } else if (card.pack === "paus")  {
+      pack = '\u2663'
+      color = 'black-card'
+    } else if (card.pack === "ouros"){
+      pack = '\u2666'
+      color = 'red-card'
+    } else {
+      pack = '\u2665'
+      color = 'red-card'
+    }
+    list.append(jQuery(`<div id='${card.value + card.pack}' class="card ${color}" onclick='useCard("${card.value}", "${card.pack}", "${card.weight}")'><span>${card.value + " " + pack}</span></div>`))
   })
 
   myCards.html(list)
@@ -184,6 +195,5 @@ function useCard(value, pack, weight){
     return
   } else {
     socket.emit('playerMove', {value,pack,weight})
-    alert("carta", value, pack, weight)
   }
 }

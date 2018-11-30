@@ -12,20 +12,21 @@
 </head>
 <body>
   <div id="lobby" class="container">
-    <div id="player-name-container">
+    <div id="player-name-container" class="custom-container">
       <h3 align="center">Enter the player's name </h3>
       <div align="center">
         <input name="player-name" id="player-name" placeholder="Player name" autofocus autocomplete="off"/>
       </div>
     </div>
-    <div id="rooms-availabe" class="list-rooms">
+
+    <div id="rooms-availabe" class="list-rooms custom-container">
       <h3 align="center"> Rooms availabe: </h3>
       <div id='list-rooms' class='container' align="center">
           
       </div>
     </div>
     
-    <div align="center">
+    <div align="center" class="custom-container">
       <h3 align="center"> Did not find a room? Create one! </h3>
       <form id="new-room">
         <input name="new-room-name" type="text" placeholder="New room name" autofocus autocomplete="off"/>    
@@ -38,7 +39,9 @@
 
 
   <div id='room'>
-    lelele
+    <div align="center">
+      <h4 id='room-title'></h4>
+    </div>
     <div id='players'>
         <h3>Players</h3>
         <div id="player_list">
@@ -52,7 +55,7 @@
       <button id='btn-start-match'>Start match</button>
     </div>
 
-    <div id='my-cards'>
+    <div id='my-cards' class="div-inline">
 
     </div>
   </div>
