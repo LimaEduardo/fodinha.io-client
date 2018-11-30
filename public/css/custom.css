@@ -1,0 +1,46 @@
+.list-rooms{
+  border-style: solid;
+  border-color: #546e99;
+}
+
+.custom-container{
+  margin-bottom: 20px;
+}
+
+.btn-join-room {
+  margin-left: 30px;
+  margin-right: 30px;
+}
+
+.card {
+  display: inline-block;
+  height: 100px;
+  width: 60px;
+  background-color: #f8f8f8;
+  border-style: solid;
+  border-color: black
+}
+
+.card:hover {
+  display: inline-block;
+  height: 100px;
+  width: 60px;
+  background-color: #f8f8f8;
+  border-style: solid;
+  border-color: rgb(0, 60, 255);
+  border-width: 3px;
+}
+
+.black-card {
+  color: black;
+  font-size: 30px;
+}
+
+.red-card {
+  color: red;
+  font-size: 30px
+}
+
+.div-inline{
+  display: inline
+}
