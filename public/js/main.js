@@ -58,7 +58,8 @@ socket.on('sendPlayersPoints', function(players) {
   players.forEach(function(player){
     if (player.id === socket.id){
       points = player.points;
-      renderPoints(points)
+      x = player.roundsToWin
+      renderPoints(points, x)
     }
   })
 })
@@ -150,6 +151,22 @@ jQuery('#btn-start-match').on('click', function(e) {
   socket.emit('startMatch')
 })
 
+jQuery('#turnsToWin').on('submit', function(e) {
+  e.preventDefault();
+
+  var num = jQuery('#rounds').val()
+
+  if (num === ""){
+    alert("Player name can't be empty")
+    return
+  }
+  var newRoomName = jQuery('[name=new-room-name]');
+
+  //Make validation for names
+  socket.emit('setRoundsToWin', {
+    roundsToWin: num
+  });
+});
 
 function joinRoom(name){
   var playerName = jQuery('#player-name').val()
@@ -199,9 +216,8 @@ function renderCards(cards){
   myCards.html(list)
 }
 
-//DUDUUU, FAZ ISSO AQUI FICAR BUNITO
-function renderPoints(points) {
-  jQuery("#my-points").html(`Points: ${points}`)
+function renderPoints(points, x) {
+  jQuery("#my-points").html(`Points: ${points} I will win ${x}`)
 }
 
 function useCard(value, pack, weight){
