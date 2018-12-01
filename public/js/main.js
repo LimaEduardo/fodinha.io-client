@@ -35,11 +35,13 @@ socket.on('updatePlayerList', function(players) {
   players.forEach(function (player) {
     var isReady = 'Not ready'
     var readyClass = 'not-ready'
+    var currentPoints = player.totalPoints
+    var pointsTODO = player.pointsToDo
     if (player.ready){
       isReady = 'Ready'
       var readyClass = 'ready'
     }
-    div.append(jQuery(`<div id="${player.name}-cards" class="player-card row"><div class="col-sm-3"><h5>Name: ${player.name}</h5> <h6> ${isReady} </h6></div><div class="col-sm-9"> <h6>Cards:</h6> <div id="cards-${player.name}" class="cards-container"></div> </div></div>`))
+    div.append(jQuery(`<div id="${player.name}-cards" class="player-card row"><div class="col-sm-3"><h5>Name: ${player.name}</h5> <h6> ${isReady} </h6> <h6>Total points: ${currentPoints}</h6> <h6>Points to do: ${pointsTODO}</h6></div><div class="col-sm-9"> <h6>Cards:</h6> <div id="cards-${player.name}" class="cards-container"></div> </div></div>`))
     jQuery(`#${player.name}-cards`).addClass(readyClass)
   })
 
@@ -193,6 +195,21 @@ jQuery('#btn-start-match').on('click', function(e) {
   e.preventDefault()
 
   socket.emit('startMatch')
+})
+
+jQuery('#turnsToWin').on('submit', function(e) {
+  e.preventDefault();
+
+  var num = jQuery('#rounds').val()
+
+  if (num === ""){
+    alert("number of rounds is empty")
+    return
+  }
+
+  socket.emit('setRoundsToWin', {
+    roundsToWin: num
+  });
 })
 
 
