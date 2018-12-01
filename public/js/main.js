@@ -41,11 +41,18 @@ socket.on('updatePlayerList', function(players) {
       isReady = 'Ready'
       var readyClass = 'ready'
     }
-    div.append(jQuery(`<div id="${player.name}-cards" class="player-card row"><div class="col-sm-3"><h5>Name: ${player.name}</h5> <h6> ${isReady} </h6> <h6>Total points: ${currentPoints}</h6> <h6>Points to do: ${pointsTODO}</h6></div><div class="col-sm-9"> <h6>Cards:</h6> <div id="cards-${player.name}" class="cards-container"></div> </div></div>`))
+    div.append(jQuery(`<div id="${player.name}-cards" class="player-card row"><div class="col-sm-3"><h5>Name: ${player.name}</h5> <h6> ${isReady} </h6> <h6 id=${player.name}-points>Total points: ${currentPoints}</h6> <h6 id=${player.name}-toDoPoints>Points to do: ${pointsTODO}</h6></div><div class="col-sm-9"> <h6>Cards:</h6> <div id="cards-${player.name}" class="cards-container"></div> </div></div>`))
     jQuery(`#${player.name}-cards`).addClass(readyClass)
+    // renderCards(player, player.cards, players)
   })
-
   // jQuery('#player_list').html(ol)
+})
+
+socket.on('updatePlayerPoints', function(players) {
+  players.forEach(function (player) {
+    jQuery(`#${player.name}-points`).html(`Total points: ${player.totalPoints}`)
+    jQuery(`#${player.name}-toDoPoints`).html(`Points to do: ${player.pointsToDo}`)
+  })
 })
 
 
