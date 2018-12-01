@@ -6,6 +6,7 @@ jQuery('#btn-player-ready').val("false")
 
 var admin = false
 var myTurn = false
+var hand = 1
 
 
 socket.on('connect', function () {
@@ -31,13 +32,15 @@ socket.on('listRooms', function(rooms) {
 socket.on('updatePlayerList', function(players) {
   var div = jQuery("#player-list");
   div.empty()
-
   players.forEach(function (player) {
-    var isReady = 'X'
+    var isReady = 'Not ready'
+    var readyClass = 'not-ready'
     if (player.ready){
-      isReady = 'V'
+      isReady = 'Ready'
+      var readyClass = 'ready'
     }
-    div.append(jQuery(`<div class="player-card row"><div class="col-sm-3"><h5>Name: ${player.name}</h5> <h6> Ready: ${isReady} </h6></div><div class="col-sm-9"> <h6>Cards:</h6> <div id="cards-${player.name}" class="cards-container"></div> </div></div>`))
+    div.append(jQuery(`<div id="${player.name}-cards" class="player-card row"><div class="col-sm-3"><h5>Name: ${player.name}</h5> <h6> ${isReady} </h6></div><div class="col-sm-9"> <h6>Cards:</h6> <div id="cards-${player.name}" class="cards-container"></div> </div></div>`))
+    jQuery(`#${player.name}-cards`).addClass(readyClass)
   })
 
   // jQuery('#player_list').html(ol)
@@ -45,6 +48,9 @@ socket.on('updatePlayerList', function(players) {
 
 
 socket.on('givePlayersCards', function(players) {
+  jQuery("#table").empty()
+  jQuery("#table").append(`<h6> Hand: ${hand} </h6> <di class='black-space-motherfucker'v></div>`)
+  clearButtons()
   var cards = []
   players.forEach(function (player) {
     if (player.id === socket.id){
@@ -72,11 +78,12 @@ socket.on('startMatchWithCards', function(currentPlayer) {
     jQuery("#player-turn").html(`It's ${currentPlayer.name} turn!`)
     myTurn = false
   }
+
+  jQuery(`#${currentPlayer.name}-cards`).removeClass("ready")
+  jQuery(`#${currentPlayer.name}-cards`).addClass("player-current-turn").removeClass("player-card")
 })
 
 socket.on('changeTurn', function({currentPlayer, players}) {
-  console.log("CHANGE")
-  console.log(currentPlayer, players)
   if (socket.id === currentPlayer.id){
     jQuery("#player-turn").html(`It's your turn to play!`)
     myTurn = true
@@ -88,13 +95,50 @@ socket.on('changeTurn', function({currentPlayer, players}) {
     if (player.id === socket.id){
       renderCards(player,player.cards, players)
     }
+    if (player.name === currentPlayer.name){
+      jQuery(`#${player.name}-cards`).addClass("player-current-turn").removeClass("player-card")
+    } else {
+      jQuery(`#${player.name}-cards`).removeClass("player-current-turn").addClass("player-card")
+    }
   })
 })
 
 socket.on('announceWinner', function({winner}) {
-  alert(`${winner.name} won this round!`)
+  if (winner.id === socket.id){
+    alert(`You won this round!`)
+  } else {
+    alert(`${winner.name} won this round!`)
+  }
+  
+  hand += 1
+  jQuery("#table").append("<div class='blank-space-motherfucker'></div>")
+  jQuery("#table").append(`<h6> Hand: ${hand} </h6> <di class='black-space-motherfucker'v></div>`)
 })
 
+socket.on('cardPlayed', function ({card, playerName}) {
+  var table = jQuery("#table")
+  
+  if (card.pack === "espadas"){
+    pack = '\u2660'
+    color = 'black-card'
+  } else if (card.pack === "paus")  {
+    pack = '\u2663'
+    color = 'black-card'
+  } else if (card.pack === "ouros"){
+    pack = '\u2666'
+    color = 'red-card'
+  } else {
+    pack = '\u2665'
+    color = 'red-card'
+  }
+  table.append(jQuery(`<div class="container-card-static"><div class="card-static ${color}" ><span align='center'>${card.value + " " + pack}</span></div><p align="center">${playerName}</p></div>`))
+})
+
+socket.on('playersNotReady', function() {
+  if (admin === true){
+    alert("All players must be ready to start a match")
+  }
+})
 
 jQuery('#new-room').on('submit', function(e) {
   e.preventDefault();
@@ -226,4 +270,9 @@ function useCard(value, pack, weight){
   } else {
     socket.emit('playerMove', {value,pack,weight})
   }
+}
+
+function clearButtons(){
+  jQuery("#player-ready").css("display", "none")
+  jQuery("#start-match").css("display", "none")
 }
