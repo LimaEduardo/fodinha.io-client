@@ -35,17 +35,25 @@ socket.on('updatePlayerList', function(players) {
   players.forEach(function (player) {
     var isReady = 'Not ready'
     var readyClass = 'not-ready'
+    var currentPoints = player.totalPoints
+    var pointsTODO = player.pointsToDo
     if (player.ready){
       isReady = 'Ready'
       var readyClass = 'ready'
     }
-    div.append(jQuery(`<div id="${player.name}-cards" class="player-card row"><div class="col-sm-3"><h5>Name: ${player.name}</h5> <h6> ${isReady} </h6></div><div class="col-sm-9"> <h6>Cards:</h6> <div id="cards-${player.name}" class="cards-container"></div> </div></div>`))
+    div.append(jQuery(`<div id="${player.name}-cards" class="player-card row"><div class="col-sm-3"><h5>Name: ${player.name}</h5> <h6> ${isReady} </h6> <h6 id=${player.name}-points>Total points: ${currentPoints}</h6> <h6 id=${player.name}-toDoPoints>Points to do: ${pointsTODO}</h6></div><div class="col-sm-9"> <h6>Cards:</h6> <div id="cards-${player.name}" class="cards-container"></div> </div></div>`))
     jQuery(`#${player.name}-cards`).addClass(readyClass)
+    // renderCards(player, player.cards, players)
   })
-
   // jQuery('#player_list').html(ol)
 })
 
+socket.on('updatePlayerPoints', function(players) {
+  players.forEach(function (player) {
+    jQuery(`#${player.name}-points`).html(`Total points: ${player.totalPoints}`)
+    jQuery(`#${player.name}-toDoPoints`).html(`Points to do: ${player.pointsToDo}`)
+  })
+})
 
 socket.on('givePlayersCards', function(players) {
   jQuery("#table").empty()
@@ -71,6 +79,7 @@ socket.on('sendPlayersPoints', function(players) {
 })
 
 socket.on('startMatchWithCards', function(currentPlayer) {
+  hand = 1
   if (socket.id === currentPlayer.id){
     jQuery("#player-turn").html(`It's your turn to play!`)
     myTurn = true
@@ -81,6 +90,8 @@ socket.on('startMatchWithCards', function(currentPlayer) {
 
   jQuery(`#${currentPlayer.name}-cards`).removeClass("ready")
   jQuery(`#${currentPlayer.name}-cards`).addClass("player-current-turn").removeClass("player-card")
+  jQuery("#table").empty()
+  jQuery("#table").append(`<h6> Hand: ${hand} </h6> <di class='black-space-motherfucker'v></div>`)
 })
 
 socket.on('changeTurn', function({currentPlayer, players}) {
@@ -113,6 +124,10 @@ socket.on('announceWinner', function({winner}) {
   hand += 1
   jQuery("#table").append("<div class='blank-space-motherfucker'></div>")
   jQuery("#table").append(`<h6> Hand: ${hand} </h6> <di class='black-space-motherfucker'v></div>`)
+})
+
+socket.on('endMatch', function(players) {
+  alert(`The End!`)
 })
 
 socket.on('cardPlayed', function ({card, playerName}) {
@@ -195,6 +210,21 @@ jQuery('#btn-start-match').on('click', function(e) {
   socket.emit('startMatch')
 })
 
+jQuery('#turnsToWin').on('submit', function(e) {
+  e.preventDefault();
+
+  var num = jQuery('#rounds').val()
+
+  if (num === ""){
+    alert("number of rounds is empty")
+    return
+  }
+
+  socket.emit('setRoundsToWin', {
+    roundsToWin: num
+  });
+})
+
 
 function joinRoom(name){
   var playerName = jQuery('#player-name').val()
@@ -259,9 +289,6 @@ function renderCards(player,cards, players){
   })
 }
 
-function renderPoints(points) {
-  jQuery("#my-points").html(`Points: ${points}`)
-}
 
 function useCard(value, pack, weight){
   if (!myTurn){
