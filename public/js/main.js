@@ -55,7 +55,6 @@ socket.on('updatePlayerPoints', function(players) {
   })
 })
 
-
 socket.on('givePlayersCards', function(players) {
   jQuery("#table").empty()
   jQuery("#table").append(`<h6> Hand: ${hand} </h6> <di class='black-space-motherfucker'v></div>`)
@@ -80,6 +79,7 @@ socket.on('sendPlayersPoints', function(players) {
 })
 
 socket.on('startMatchWithCards', function(currentPlayer) {
+  hand = 1
   if (socket.id === currentPlayer.id){
     jQuery("#player-turn").html(`It's your turn to play!`)
     myTurn = true
@@ -90,6 +90,8 @@ socket.on('startMatchWithCards', function(currentPlayer) {
 
   jQuery(`#${currentPlayer.name}-cards`).removeClass("ready")
   jQuery(`#${currentPlayer.name}-cards`).addClass("player-current-turn").removeClass("player-card")
+  jQuery("#table").empty()
+  jQuery("#table").append(`<h6> Hand: ${hand} </h6> <di class='black-space-motherfucker'v></div>`)
 })
 
 socket.on('changeTurn', function({currentPlayer, players}) {
@@ -122,6 +124,10 @@ socket.on('announceWinner', function({winner}) {
   hand += 1
   jQuery("#table").append("<div class='blank-space-motherfucker'></div>")
   jQuery("#table").append(`<h6> Hand: ${hand} </h6> <di class='black-space-motherfucker'v></div>`)
+})
+
+socket.on('endMatch', function(players) {
+  alert(`The End!`)
 })
 
 socket.on('cardPlayed', function ({card, playerName}) {
@@ -283,9 +289,6 @@ function renderCards(player,cards, players){
   })
 }
 
-function renderPoints(points) {
-  jQuery("#my-points").html(`Points: ${points}`)
-}
 
 function useCard(value, pack, weight){
   if (!myTurn){
