@@ -1,4 +1,6 @@
 var socket = io("http://localhost:3000")
+//Quando der deploy, tem que comentar a linha de cima e descomentar a de baixo.
+// var socket = io("http://server-fodinha.herokuapp.com/")
 
 jQuery("#room").css("visibility", "hidden");
 jQuery("#start-match").css("visibility", "hidden");
@@ -115,7 +117,10 @@ socket.on('changeTurn', function({currentPlayer, players}) {
 })
 
 socket.on('announceWinner', function({winner}) {
-  if (winner.id === socket.id){
+  console.log(winner)
+  if (winner === "draw"){
+    alert(`This round ended in a draw`)
+  } else if (winner.id === socket.id) {
     alert(`You won this round!`)
   } else {
     alert(`${winner.name} won this round!`)
