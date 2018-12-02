@@ -126,8 +126,13 @@ socket.on('announceWinner', function({winner}) {
   jQuery("#table").append(`<h6> Hand: ${hand} </h6> <di class='black-space-motherfucker'v></div>`)
 })
 
-socket.on('endMatch', function(players) {
-  alert(`The End!`)
+socket.on('endMatch', function(player) {
+  console.log(player)
+  if (player === null){
+    alert(`The match has ended! We don't have any winner`)
+  } else {
+    alert(`The match has ended! The winner is ${player.name}`)
+  }
 })
 
 socket.on('cardPlayed', function ({card, playerName}) {
