@@ -1,6 +1,6 @@
-var socket = io("http://localhost:3000")
+// var socket = io("http://localhost:3000")
 //Quando der deploy, tem que comentar a linha de cima e descomentar a de baixo.
-// var socket = io("http://server-fodinha.herokuapp.com/")
+var socket = io("http://server-fodinha.herokuapp.com/")
 
 jQuery("#room").css("visibility", "hidden");
 jQuery("#start-match").css("visibility", "hidden");
@@ -129,6 +129,7 @@ socket.on('announceWinner', function({winner}) {
   hand += 1
   jQuery("#table").append("<div class='blank-space-motherfucker'></div>")
   jQuery("#table").append(`<h6> Hand: ${hand} </h6> <di class='black-space-motherfucker'v></div>`)
+  jQuery("#rounds").prop('disabled', false)
 })
 
 socket.on('endMatch', function(player) {
@@ -163,6 +164,10 @@ socket.on('playersNotReady', function() {
   if (admin === true){
     alert("All players must be ready to start a match")
   }
+})
+
+socket.on('playersNotSetPointsTODO', function({id}) {  
+  alert('All players must has set points to do')
 })
 
 jQuery('#new-room').on('submit', function(e) {
@@ -233,6 +238,7 @@ jQuery('#turnsToWin').on('submit', function(e) {
   socket.emit('setRoundsToWin', {
     roundsToWin: num
   });
+  jQuery("#rounds").prop('disabled', true)
 })
 
 
