@@ -26,7 +26,7 @@ socket.on('listRooms', function(rooms) {
     if (!room.inGame){
       // <p>Put the button on the same line as this text. <span class="pull-right">
       // <button type="button" class="btn btn-default btn-small" name="submit" id="submit">+ Add Me</button></span></p>
-      roomList.append(`<p>Room: ${room.name} <span class='pull-right'><button type='buttom' class='btn btn-primary btn-small btn-join-room' name='join_room' id='join_room' onclick="joinRoom('${room.name}')" name=${room.name}> Join room </button></span> Players : ${room.players.length} </p>`)
+      roomList.append(`<p>Room: ${room.name} <span class='pull-right'><button type='buttom' class='btn btn-primary btn-small btn-join-room' name='join_room' id='join_room' onclick="joinRoom('${room.name}')" name=${room.name}> Join room </button> <button type='buttom' class='btn btn-primary btn-small btn-join-room' name='watch-room' id='watch-room' onclick="watchRoom('${room.name}')" name='${room.name}-watch'> Watch </button> </span> Players : ${room.players.length} </p>`)
     }
   });
 })
@@ -250,6 +250,19 @@ function joinRoom(name){
   })
 }
 
+function watchRoom(name){
+  var playerName = jQuery('#player-name').val()
+  if (playerName === ""){
+    alert("Player name can't be empty")
+    return
+  }
+
+  socket.emit('watchRoom', {name,playerName}, function (room) {
+    jQuery("#lobby").css("display", "none");
+    renderRoom(name)
+  })
+}
+
 
 function renderRoom(name){
   jQuery("#room").css("visibility", "visible");
@@ -287,12 +300,9 @@ function renderCards(player,cards, players){
     if (player.name === individual.name){
       return
     } else {
-      console.log("oq", individual)
       var individualCards = jQuery(`#cards-${individual.name}`)
       individualCards.empty()
-      console.log(individualCards)
       individual.cards.forEach((card) => {
-        console.log(card)
         individualCards.append(jQuery(`<div class="card"><img src="../assets/back-card.png" alt="Opponent Card" height="100px" width="60px"></div>`))
       })
     }
