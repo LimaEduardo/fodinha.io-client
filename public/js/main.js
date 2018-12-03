@@ -1,6 +1,6 @@
-var socket = io("http://localhost:3000")
+// var socket = io("http://localhost:3000")
 //Quando der deploy, tem que comentar a linha de cima e descomentar a de baixo.
-// var socket = io("http://server-fodinha.herokuapp.com/")
+var socket = io("http://server-fodinha.herokuapp.com/")
 
 jQuery("#room").css("visibility", "hidden");
 jQuery("#start-match").css("visibility", "hidden");
