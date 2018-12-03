@@ -165,6 +165,13 @@ socket.on('playersNotReady', function() {
   }
 })
 
+socket.on('playersNotSetPointsTODO', function({id}) {
+  console.log(socket.id, id)
+  if (socket.id === id){
+    alert('All players must has set points to do')
+  }
+})
+
 jQuery('#new-room').on('submit', function(e) {
   e.preventDefault();
 
