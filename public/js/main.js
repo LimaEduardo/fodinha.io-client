@@ -129,6 +129,7 @@ socket.on('announceWinner', function({winner}) {
   hand += 1
   jQuery("#table").append("<div class='blank-space-motherfucker'></div>")
   jQuery("#table").append(`<h6> Hand: ${hand} </h6> <di class='black-space-motherfucker'v></div>`)
+  jQuery("#rounds").prop('disabled', false)
 })
 
 socket.on('endMatch', function(player) {
@@ -165,11 +166,8 @@ socket.on('playersNotReady', function() {
   }
 })
 
-socket.on('playersNotSetPointsTODO', function({id}) {
-  console.log(socket.id, id)
-  if (socket.id === id){
-    alert('All players must has set points to do')
-  }
+socket.on('playersNotSetPointsTODO', function({id}) {  
+  alert('All players must has set points to do')
 })
 
 jQuery('#new-room').on('submit', function(e) {
@@ -240,6 +238,7 @@ jQuery('#turnsToWin').on('submit', function(e) {
   socket.emit('setRoundsToWin', {
     roundsToWin: num
   });
+  jQuery("#rounds").prop('disabled', true)
 })
 
 
