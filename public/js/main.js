@@ -117,7 +117,6 @@ socket.on('changeTurn', function({currentPlayer, players}) {
 })
 
 socket.on('announceWinner', function({winner}) {
-  console.log(winner)
   if (winner === "draw"){
     alert(`This round ended in a draw`)
   } else if (winner.id === socket.id) {
@@ -133,7 +132,6 @@ socket.on('announceWinner', function({winner}) {
 })
 
 socket.on('endMatch', function(player) {
-  console.log(player)
   if (player === null){
     alert(`The match has ended! We don't have any winner`)
   } else {
@@ -195,7 +193,6 @@ jQuery('#new-room').on('submit', function(e) {
     admin = true
     jQuery("#lobby").css("display", "none");
     renderRoom(newRoomName.val())
-    console.log(room)
   });
 });
 
@@ -252,7 +249,6 @@ function joinRoom(name){
   socket.emit('joinRoom', {name,playerName}, function (room) {
     jQuery("#lobby").css("display", "none");
     renderRoom(name)
-    console.log(room)
   })
 }
 
@@ -293,12 +289,9 @@ function renderCards(player,cards, players){
     if (player.name === individual.name){
       return
     } else {
-      console.log("oq", individual)
       var individualCards = jQuery(`#cards-${individual.name}`)
       individualCards.empty()
-      console.log(individualCards)
       individual.cards.forEach((card) => {
-        console.log(card)
         individualCards.append(jQuery(`<div class="card"><img src="../assets/back-card.png" alt="Opponent Card" height="100px" width="60px"></div>`))
       })
     }
