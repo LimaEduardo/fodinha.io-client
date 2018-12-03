@@ -1,6 +1,6 @@
-// var socket = io("http://localhost:3000")
+var socket = io("http://localhost:3000")
 //Quando der deploy, tem que comentar a linha de cima e descomentar a de baixo.
-var socket = io("http://server-fodinha.herokuapp.com/")
+// var socket = io("http://server-fodinha.herokuapp.com/")
 
 jQuery("#room").css("visibility", "hidden");
 jQuery("#start-match").css("visibility", "hidden");
@@ -9,6 +9,7 @@ jQuery('#btn-player-ready').val("false")
 var admin = false
 var myTurn = false
 var hand = 1
+var observer = false
 
 
 socket.on('connect', function () {
@@ -24,9 +25,7 @@ socket.on('listRooms', function(rooms) {
   }
   rooms.rooms.forEach(room => {
     if (!room.inGame){
-      // <p>Put the button on the same line as this text. <span class="pull-right">
-      // <button type="button" class="btn btn-default btn-small" name="submit" id="submit">+ Add Me</button></span></p>
-      roomList.append(`<p>Room: ${room.name} <span class='pull-right'><button type='buttom' class='btn btn-primary btn-small btn-join-room' name='join_room' id='join_room' onclick="joinRoom('${room.name}')" name=${room.name}> Join room </button></span> Players : ${room.players.length} </p>`)
+      roomList.append(`<p>Room: ${room.name} <span class='pull-right'><button type='buttom' class='btn btn-primary btn-small btn-join-room' name='join_room' id='join_room' onclick="joinRoom('${room.name}')" name=${room.name}> Join room </button><button type='buttom' class='btn btn-primary btn-small btn-join-room' name='watch-room' id='watch_room' onclick="watchRoom('${room.name}')" name="${room.name}-watch"> Watch room </button></span> Players : ${room.players.length} </p>`)
     }
   });
 })
@@ -68,6 +67,10 @@ socket.on('givePlayersCards', function(players) {
       renderCards(player,cards, players)
     }
   })
+
+  if (observer === true){
+    renderCardsObserver(players)
+  }
 })
 
 socket.on('sendPlayersPoints', function(players) {
@@ -114,6 +117,9 @@ socket.on('changeTurn', function({currentPlayer, players}) {
       jQuery(`#${player.name}-cards`).removeClass("player-current-turn").addClass("player-card")
     }
   })
+  if (observer === true){
+    renderCardsObserver(players)
+  }
 })
 
 socket.on('announceWinner', function({winner}) {
@@ -252,6 +258,22 @@ function joinRoom(name){
   })
 }
 
+function watchRoom(name){
+  var playerName = jQuery('#player-name').val()
+  if (playerName === ""){
+    alert("Player name can't be empty")
+    return
+  }
+
+  socket.emit('watchRoom', {name}, function () {
+    jQuery("#lobby").css("display", "none");
+    renderRoom(name)
+    observer = true
+  })
+
+  jQuery("#btn-player-ready").css("display", "none")
+  jQuery("#turnsToWin").css("display", "none")
+}
 
 function renderRoom(name){
   jQuery("#room").css("visibility", "visible");
@@ -262,6 +284,7 @@ function renderRoom(name){
 }
 
 function renderCards(player,cards, players){
+  console.log(player, cards, players)
   var myCards = jQuery(`#cards-${player.name}`)
 
   myCards.empty()
@@ -295,6 +318,16 @@ function renderCards(player,cards, players){
         individualCards.append(jQuery(`<div class="card"><img src="../assets/back-card.png" alt="Opponent Card" height="100px" width="60px"></div>`))
       })
     }
+  })
+}
+
+function renderCardsObserver(players){
+  players.forEach((individual) => {
+    var individualCards = jQuery(`#cards-${individual.name}`)
+    individualCards.empty()
+    individual.cards.forEach((card) => {
+      individualCards.append(jQuery(`<div class="card"><img src="../assets/back-card.png" alt="Opponent Card" height="100px" width="60px"></div>`))
+    })
   })
 }
 
